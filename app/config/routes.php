@@ -46,10 +46,8 @@ defined('PREVENT_DIRECT_ACCESS') OR exit('No direct script access allowed');
 
 $router->get('/', 'Welcome::index');
 
-// Migration Routes - only reachable from localhost (never from the public internet)
-$is_local = (PHP_SAPI === 'cli') || in_array($_SERVER['REMOTE_ADDR'] ?? '', ['127.0.0.1', '::1']);
-
-if ($is_local) {
+// Migration Routes - only enabled when APP_ENV=development (never in production)
+if (getenv('APP_ENV') === 'development') {
     $router->get('create-migration/{migration_class}', 'MigrationController::create_migration');
     $router->get('migrate','MigrationController::migrate');
     $router->get('rollback','MigrationController::rollback');
