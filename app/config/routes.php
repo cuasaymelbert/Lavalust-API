@@ -46,13 +46,17 @@ defined('PREVENT_DIRECT_ACCESS') OR exit('No direct script access allowed');
 
 $router->get('/', 'Welcome::index');
 
-// Migration Routes
-$router->get('create-migration/{migration_class}', 'MigrationController::create_migration');
-$router->get('migrate','MigrationController::migrate');
-$router->get('rollback','MigrationController::rollback');
-$router->get('rollback-all','MigrationController::rollback_all');
-$router->get('refresh','MigrationController::refresh');
-$router->get('status','MigrationController::status');
+// Migration Routes - only reachable from localhost (never from the public internet)
+$is_local = in_array($_SERVER['REMOTE_ADDR'] ?? '', ['127.0.0.1', '::1']);
+
+if ($is_local) {
+    $router->get('create-migration/{migration_class}', 'MigrationController::create_migration');
+    $router->get('migrate','MigrationController::migrate');
+    $router->get('rollback','MigrationController::rollback');
+    $router->get('rollback-all','MigrationController::rollback_all');
+    $router->get('refresh','MigrationController::refresh');
+    $router->get('status','MigrationController::status');
+}
 
 // Auth
 $router->post('api/auth/register','AuthController::register');
